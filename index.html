@@ -5,19 +5,41 @@
   <title>系學會 x 店家平台 Demo</title>
 
   <style>
-    /* 整體設定 */
+    /* ===== 背景：黑色 + 透明 Logo（重點在這） ===== */
     body {
       font-family: sans-serif;
       margin: 0;
-      color: #eee;
+      color: #eaeaea;              /* 黑底比較看得到字 */
+      background: #111;            /* 純黑底 */
+      position: relative;          /* 給 ::before 定位用 */
+      min-height: 100vh;
+    }
+
+    /* 這層只負責放背景圖 + 透明度，不影響文字 */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("8e2a24db-6161-4f99-a99d-c9c0101fab5b.png");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 380px;
+      opacity: 0.15;               /* 透明度：越小越淡 */
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 讓所有內容蓋在背景圖上面 */
+    body > * {
+      position: relative;
+      z-index: 1;
     }
 
     /* Header + 登入區 + 導覽 */
     header {
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(74, 144, 226, 0.92);
       color: white;
       padding: 10px 15px 5px;
-      backdrop-filter: blur(6px);
     }
 
     header h1 {
@@ -57,6 +79,10 @@
       background: #c0392b;
     }
 
+    #welcomeText {
+      font-size: 14px;
+    }
+
     /* 導覽列 */
     nav {
       margin-top: 8px;
@@ -68,7 +94,7 @@
 
     .nav-btn {
       background: white;
-      color: #003f88;
+      color: #4A90E2;
       border: none;
       padding: 6px 12px;
       border-radius: 20px;
@@ -85,15 +111,86 @@
     .section {
       width: 90%;
       margin: 20px auto;
-      text-align: center;
     }
 
     .section-title {
       text-align: center;
       margin: 20px 0 10px;
+      color: #eaeaea;
     }
 
-    /* 卡片 */
+    .section-center {
+      text-align: center;
+    }
+
+    /* 卡片樣式 */
+    .card {
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 20px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      width: 80%;
+      margin: 10px auto;
+      transition: 0.2s;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 140px;
+
+      color: #222;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.35);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    /* 按鈕 */
+    button {
+      font-family: inherit;
+    }
+
+    .card button {
+      background: #4A90E2;
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      align-self: flex-start;
+    }
+
+    .card button:hover {
+      opacity: 0.9;
+    }
+
+    /* 詳細內容 */
+    .detail {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f0f7ff;
+      border-left: 4px solid #4A90E2;
+      border-radius: 5px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* 卡片列表（如果你之前改直排，就用 flex；沒改就保留 grid）
+       下面我先用「直排」，符合你之前要的 */
     .card-container {
       display: flex;
       flex-direction: column;
@@ -102,39 +199,7 @@
       margin: 0 auto 40px auto;
     }
 
-    .card {
-      background: rgba(255, 255, 255, 0.92);
-      color: #333;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-    }
-
-    .card button {
-      background: #003f88;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .detail {
-      margin-top: 10px;
-      padding: 10px;
-      background: #eef6ff;
-      border-left: 4px solid #003f88;
-      display: none;
-    }
-
-    .detail.show {
-      display: block;
-    }
-
-    .hidden {
-      display: none;
-    }
-
+    /* 多頁切換 */
     .page {
       display: none;
     }
@@ -143,93 +208,203 @@
       display: block;
     }
 
-    /* ===== 背景：黑色＋透明 Logo ===== */
-    body {
-      background-color: #111;
-      background-image: url("8e2a24db-6161-4f99-a99d-c9c0101fab5b.png");
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 420px;
-      background-attachment: fixed;
+    /* 小螢幕 RWD */
+    @media (max-width: 600px) {
+      .card {
+        width: 95%;
+      }
+
+      #loginArea,
+      #userInfo {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      nav {
+        flex-wrap: wrap;
+      }
     }
   </style>
 </head>
 
 <body>
+  <header>
+    <h1>系學會 x 店家平台</h1>
 
-<header>
-  <h1>系學會 x 店家平台</h1>
+    <!-- 登入區 -->
+    <div id="loginArea">
+      <input id="nameInput" type="text" placeholder="輸入暱稱" />
+      <select id="roleSelect">
+        <option value="student">學生</option>
+        <option value="assoc">系學會</option>
+        <option value="store">店家</option>
+      </select>
+      <button id="loginBtn">登入</button>
+    </div>
 
-  <div id="loginArea">
-    <input id="nameInput" type="text" placeholder="輸入暱稱" />
-    <select id="roleSelect">
-      <option value="student">學生</option>
-      <option value="assoc">系學會</option>
-      <option value="store">店家</option>
-    </select>
-    <button id="loginBtn">登入</button>
-  </div>
+    <!-- 已登入顯示 -->
+    <div id="userInfo" class="hidden">
+      <span id="welcomeText"></span>
+      <button id="logoutBtn">登出</button>
+    </div>
 
-  <div id="userInfo" class="hidden">
-    <span id="welcomeText"></span>
-    <button id="logoutBtn">登出</button>
-  </div>
+    <!-- 導覽列 -->
+    <nav id="navBar" class="hidden">
+      <button class="nav-btn" data-target="home">首頁</button>
+      <button class="nav-btn" data-target="activities">活動列表</button>
+      <button class="nav-btn" data-target="stores">店家專區</button>
+    </nav>
+  </header>
 
-  <nav id="navBar" class="hidden">
-    <button class="nav-btn active" data-target="home">首頁</button>
-    <button class="nav-btn" data-target="activities">活動列表</button>
-    <button class="nav-btn" data-target="stores">店家專區</button>
-  </nav>
-</header>
+  <!-- 首頁 Page -->
+  <section id="home" class="page active-page">
+    <div class="section">
+      <h1>歡迎來到系學會 x 店家平台</h1>
+      <h2>請先登入，會依照你的身分顯示不同內容</h2>
+    </div>
 
-<section id="home" class="page active-page">
-  <div class="section" id="homeContent">
-    <p>請先登入以查看內容。</p>
-  </div>
-</section>
+    <div class="section section-center" id="homeContent">
+      <p>目前為訪客模式，只能瀏覽基本資訊。</p>
+    </div>
+  </section>
 
-<section id="activities" class="page">
-  <h2 class="section-title">活動列表</h2>
-  <div id="activityList" class="card-container"></div>
-</section>
+  <!-- 活動列表 Page -->
+  <section id="activities" class="page">
+    <h2 class="section-title">活動列表</h2>
+    <div id="activityList" class="card-container"></div>
+  </section>
 
-<section id="stores" class="page">
-  <h2 class="section-title">店家專區</h2>
-  <div id="storeList" class="card-container"></div>
-</section>
+  <!-- 店家專區 Page -->
+  <section id="stores" class="page">
+    <h2 class="section-title">店家專區</h2>
+    <div id="storeList" class="card-container"></div>
+  </section>
 
-<script>
-  const activities = [
-    { title: "系學會迎新", info: "2025/10/01｜大禮堂", detail: "迎新活動。" },
-    { title: "合作說明會", info: "2025/10/10｜系辦", detail: "說明合作方式。" }
-  ];
+  <script>
+    const activities = [
+      { title: "系學會迎新活動", time: "2025/10/01", place: "學校大禮堂", description: "迎接新生認識系學會、抽獎、系上介紹、學長姐分享。" },
+      { title: "店家合作說明會", time: "2025/10/10", place: "系辦教室", description: "說明系學會與周邊店家的合作內容與贊助方式。" },
+      { title: "期初團康活動", time: "2025/10/20", place: "操場", description: "透過遊戲讓同學彼此熟悉，建立團隊默契。" }
+    ];
 
-  const stores = [
-    { title: "飲料店 A", info: "學生 9 折", detail: "憑學生證。" },
-    { title: "餐廳 B", info: "套餐優惠", detail: "活動期間。" }
-  ];
+    const stores = [
+      { name: "合作店家 A", offer: "飲料 9 折優惠，配合系學會活動發放折價券。", detail: "憑學生證與活動貼紙可享 9 折，活動期間限定。" },
+      { name: "合作店家 B", offer: "套餐折扣與贊助小點心給活動參加者。", detail: "活動當天至店家消費可享套餐優惠，並提供飲料贊助。" },
+      { name: "合作店家 C", offer: "提供點心與折扣碼給參加系上活動的同學。", detail: "出示活動參加畫面即可享有小點心一份。" }
+    ];
 
-  function createCards(data, containerId) {
-    const container = document.getElementById(containerId);
-    data.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <h3>${item.title}</h3>
-        <p>${item.info}</p>
-        <button>查看</button>
-        <div class="detail">${item.detail}</div>
-      `;
-      card.querySelector("button").onclick = () => {
-        card.querySelector(".detail").classList.toggle("show");
-      };
-      container.appendChild(card);
+    const activityListEl = document.getElementById("activityList");
+    const storeListEl = document.getElementById("storeList");
+    const pages = document.querySelectorAll(".page");
+    const navButtons = document.querySelectorAll(".nav-btn");
+
+    const loginArea = document.getElementById("loginArea");
+    const nameInput = document.getElementById("nameInput");
+    const roleSelect = document.getElementById("roleSelect");
+    const loginBtn = document.getElementById("loginBtn");
+    const userInfo = document.getElementById("userInfo");
+    const welcomeText = document.getElementById("welcomeText");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const navBar = document.getElementById("navBar");
+    const homeContent = document.getElementById("homeContent");
+
+    let currentUser = null;
+
+    function renderActivities() {
+      activityListEl.innerHTML = "";
+      activities.forEach((act) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h3>${act.title}</h3>
+          <p>時間：${act.time}<br>地點：${act.place}</p>
+          <button class="toggle-btn">查看活動</button>
+          <div class="detail hidden"><p>${act.description}</p></div>
+        `;
+        activityListEl.appendChild(card);
+      });
+    }
+
+    function renderStores() {
+      storeListEl.innerHTML = "";
+      stores.forEach((s) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h3>${s.name}</h3>
+          <p>${s.offer}</p>
+          <button class="toggle-btn">查看詳情</button>
+          <div class="detail hidden"><p>${s.detail}</p></div>
+        `;
+        storeListEl.appendChild(card);
+      });
+    }
+
+    function setupToggle() {
+      const cards = document.querySelectorAll(".card");
+      cards.forEach((card) => {
+        const btn = card.querySelector(".toggle-btn");
+        const detail = card.querySelector(".detail");
+        if (!btn || !detail) return;
+        btn.addEventListener("click", () => detail.classList.toggle("hidden"));
+      });
+    }
+
+    navButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.getAttribute("data-target");
+        navButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        pages.forEach((page) => page.classList.toggle("active-page", page.id === targetId));
+      });
     });
-  }
 
-  createCards(activities, "activityList");
-  createCards(stores, "storeList");
-</script>
+    loginBtn.addEventListener("click", () => {
+      const name = nameInput.value.trim();
+      const role = roleSelect.value;
+      if (!name) return alert("請先輸入暱稱");
 
+      currentUser = { name, role };
+      loginArea.classList.add("hidden");
+      userInfo.classList.remove("hidden");
+      navBar.classList.remove("hidden");
+
+      welcomeText.textContent = `嗨，${name}（${roleLabel(role)}）歡迎回來！`;
+      updateHomeContent();
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      currentUser = null;
+      loginArea.classList.remove("hidden");
+      userInfo.classList.add("hidden");
+      navBar.classList.add("hidden");
+      homeContent.innerHTML = `<p>目前為訪客模式，只能瀏覽基本資訊。</p>`;
+      navButtons.forEach((b) => b.classList.remove("active"));
+      document.getElementById("home").classList.add("active-page");
+      pages.forEach((p) => { if (p.id !== "home") p.classList.remove("active-page"); });
+    });
+
+    function roleLabel(role) {
+      if (role === "student") return "學生";
+      if (role === "assoc") return "系學會";
+      if (role === "store") return "店家";
+      return "訪客";
+    }
+
+    function updateHomeContent() {
+      if (!currentUser) return;
+      if (currentUser.role === "student") {
+        homeContent.innerHTML = `<p>你是學生，可以瀏覽活動列表，查看有哪些店家合作優惠。</p>`;
+      } else if (currentUser.role === "assoc") {
+        homeContent.innerHTML = `<p>你是系學會，可以查看目前有哪些活動（之後可新增「新增活動」功能）。</p>`;
+      } else {
+        homeContent.innerHTML = `<p>你是店家合作夥伴，之後可以增加「管理贊助方案」功能。</p>`;
+      }
+    }
+
+    renderActivities();
+    renderStores();
+    setupToggle();
+  </script>
 </body>
 </html>
