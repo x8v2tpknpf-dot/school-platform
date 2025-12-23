@@ -160,9 +160,89 @@
     .page { display: none; }
     .active-page { display: block; }
 
+    /* =========================
+       首頁介紹文字（新增）
+       ========================= */
+    .hero-card {
+      background: rgba(255,255,255,0.92);
+      color: #222;
+      border-radius: 14px;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.35);
+      width: 90%;
+      max-width: 980px;
+      margin: 20px auto 30px;
+      padding: 22px 18px;
+      text-align: left;
+    }
+
+    .hero-title {
+      margin: 0 0 8px 0;
+      font-size: 22px;
+      line-height: 1.25;
+      color: #0b2b4d;
+    }
+
+    .hero-sub {
+      margin: 0 0 14px 0;
+      font-size: 14px;
+      color: #2d3b45;
+      opacity: 0.95;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .hero-box {
+      background: #f3f8ff;
+      border: 1px solid rgba(74,144,226,0.25);
+      border-radius: 12px;
+      padding: 14px 14px 12px;
+    }
+
+    .hero-box h3 {
+      margin: 0 0 6px 0;
+      font-size: 16px;
+      color: #0b2b4d;
+    }
+
+    .hero-box p, .hero-box li {
+      margin: 6px 0;
+      color: #22313a;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .hero-pill {
+      display: inline-block;
+      background: rgba(74,144,226,0.12);
+      color: #0b2b4d;
+      border: 1px solid rgba(74,144,226,0.25);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin: 10px 8px 0 0;
+    }
+
+    .hero-note {
+      margin-top: 14px;
+      background: rgba(0,63,136,0.08);
+      border-left: 4px solid #003f88;
+      padding: 12px 12px;
+      border-radius: 10px;
+      color: #1d2b34;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
     @media (max-width: 600px) {
       .card { width: 95%; }
       nav { flex-wrap: wrap; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-title { font-size: 20px; }
     }
   </style>
 </head>
@@ -275,14 +355,66 @@
   const roleSelect = document.getElementById("roleSelect");
   const pages = document.querySelectorAll(".page");
   const navBtns = document.querySelectorAll(".nav-btn");
+  const homeContent = document.getElementById("homeContent");
+
+  // ====== 新增：首頁介紹文案（登入後顯示） ======
+  function renderHomeIntro(name, roleText) {
+    homeContent.innerHTML = `
+      <div class="hero-card">
+        <h2 class="hero-title">系學會 × 店家合作平台（Demo）</h2>
+        <p class="hero-sub">
+          這裡是我們用來「整理活動資訊、媒合周邊店家合作」的示範首頁。
+          讓系學會、店家、同學都能用同一個介面快速對齊資訊與需求。
+        </p>
+
+        <span class="hero-pill">給店家：合作曝光更清楚</span>
+        <span class="hero-pill">給系學會：管理流程更方便</span>
+        <span class="hero-pill">給同學：活動與優惠一目了然</span>
+
+        <div class="hero-grid">
+          <div class="hero-box">
+            <h3>給店家看的重點</h3>
+            <p>我們希望把「合作方式」講清楚、做簡單：</p>
+            <ul>
+              <li>曝光：出現在活動頁、首頁推薦、店家專區</li>
+              <li>互惠：學生專屬優惠／限定套餐／折扣碼</li>
+              <li>合作：贊助物資、抽獎品、活動當天擺攤</li>
+            </ul>
+          </div>
+
+          <div class="hero-box">
+            <h3>給系學會看的重點</h3>
+            <p>把活動與合作集中管理，減少來回溝通成本：</p>
+            <ul>
+              <li>活動資訊統一公告，避免版本混亂</li>
+              <li>店家合作條件透明化，方便比較與決策</li>
+              <li>後續可擴充：表單、統計、審核、對帳</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="hero-note">
+          <strong>網站主旨：</strong>用一個簡單的平台，串起「系學會活動」與「周邊店家資源」，
+          讓合作更有效率、資訊更透明、同學更有感。<br/>
+          你目前登入身分：<strong>${name}</strong>（${roleText}）
+        </div>
+      </div>
+    `;
+  }
 
   loginBtn.onclick = () => {
     const name = nameInput.value.trim();
     if (!name) return alert("請輸入暱稱");
+
     loginArea.classList.add("hidden");
     userInfo.classList.remove("hidden");
     navBar.classList.remove("hidden");
-    welcomeText.textContent = `嗨 ${name}（${roleSelect.options[roleSelect.selectedIndex].text}）`;
+
+    const roleText = roleSelect.options[roleSelect.selectedIndex].text;
+    welcomeText.textContent = `嗨 ${name}（${roleText}）`;
+
+    // 新增：登入後替換首頁內容成介紹文案
+    renderHomeIntro(name, roleText);
   };
 
   logoutBtn.onclick = () => location.reload();
