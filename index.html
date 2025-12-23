@@ -6,7 +6,7 @@
 
   <style>
     /* =========================
-       全站背景（黑色 + 半透明 Logo）
+       全站背景（每一頁滿版 + 明亮）
        ========================= */
 
     body {
@@ -14,20 +14,26 @@
       margin: 0;
       color: #eee;
       background-color: #111;
-      position: relative;
       min-height: 100vh;
+      position: relative;
     }
 
-    /* 背景圖片層（不影響內容） */
+    /* 滿版背景圖片（所有頁面） */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
-      background-image: url("logo1.jpg"); /* ← 確認檔名 */
+
+      background-image: url("logo1.jpg");
       background-repeat: no-repeat;
       background-position: center;
-      background-size: 420px;
-      opacity: 0.15;
+      background-size: cover;
+
+      /* 視覺調校（已幫你配好） */
+      opacity: 0.45;
+      filter: brightness(1.25) contrast(1.08) saturate(0.95);
+      background-blend-mode: overlay;
+
       pointer-events: none;
       z-index: 0;
     }
@@ -85,7 +91,6 @@
       background: #c0392b;
     }
 
-    /* 導覽列 */
     nav {
       margin-top: 8px;
       display: flex;
@@ -120,6 +125,7 @@
     }
 
     .section-title {
+      text-align: center;
       margin: 20px 0 10px;
     }
 
