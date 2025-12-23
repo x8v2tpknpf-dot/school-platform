@@ -6,7 +6,7 @@
 
   <style>
     /* =========================
-       全站背景（黑色 + 半透明 JPG）
+       全站背景（黑色 + 半透明 Logo）
        ========================= */
 
     body {
@@ -14,16 +14,16 @@
       margin: 0;
       color: #eee;
       background-color: #111;
-      position: relative;
       min-height: 100vh;
+      position: relative;
     }
 
-    /* 背景圖片層（不影響文字） */
+    /* 背景圖片層（獨立一層，不影響內容） */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
-      logo4137.jpg: url("logo4137.jpg""; /* ← 你的 JPG 檔名 */
+      background-image: url("logo4137.jpg"); /* ⚠️ 檔名一定要完全一樣 */
       background-repeat: no-repeat;
       background-position: center;
       background-size: 420px;
@@ -32,7 +32,7 @@
       z-index: 0;
     }
 
-    /* 讓所有內容在背景之上 */
+    /* 所有實際內容蓋在背景上 */
     body > * {
       position: relative;
       z-index: 1;
@@ -85,7 +85,6 @@
       background: #c0392b;
     }
 
-    /* 導覽列 */
     nav {
       margin-top: 8px;
       display: flex;
@@ -110,7 +109,7 @@
     }
 
     /* =========================
-       區塊 & 標題
+       區塊
        ========================= */
 
     .section {
@@ -122,11 +121,10 @@
     .section-title {
       text-align: center;
       margin: 20px 0 10px;
-      color: #eee;
     }
 
     /* =========================
-       卡片（直向排列）
+       卡片（直向）
        ========================= */
 
     .card-container {
@@ -138,11 +136,11 @@
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.95);
       color: #333;
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.35);
       width: 80%;
       margin: 0 auto;
       display: flex;
@@ -259,6 +257,7 @@
 
   function createCards(data, containerId) {
     const container = document.getElementById(containerId);
+    container.innerHTML = "";
     data.forEach(item => {
       const card = document.createElement("div");
       card.className = "card";
