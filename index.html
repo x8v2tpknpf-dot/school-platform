@@ -165,15 +165,16 @@
       display: none;
     }
 
-    /* 卡片列表 */
-    .card-container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      width: 90%;
-      margin: 0 auto 40px auto;
-    }
+    /* 卡片列表（直向排列） */
+.card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 90%;
+  margin: 0 auto 40px auto;
+}
 
+    
     /* 多頁切換 */
     .page {
       display: none;
