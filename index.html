@@ -2,7 +2,8 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>系學會 x 店家平台 Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>系學會 x 店家合作平台 Demo</title>
 
   <style>
     /* =========================
@@ -42,29 +43,33 @@
     header {
       background: rgba(74, 144, 226, 0.92);
       color: white;
-      padding: 10px 15px 5px;
+      padding: 10px 15px 8px;
     }
 
     header h1 {
       margin: 0;
       text-align: center;
       font-size: 22px;
+      letter-spacing: 1px;
     }
 
     #loginArea,
     #userInfo {
-      margin-top: 8px;
+      margin-top: 10px;
       display: flex;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     #loginArea input,
     #loginArea select {
-      padding: 4px 8px;
-      border-radius: 4px;
+      padding: 6px 10px;
+      border-radius: 6px;
       border: none;
+      outline: none;
+      font-size: 14px;
     }
 
     #loginArea button,
@@ -72,10 +77,10 @@
       background: #003f88;
       color: white;
       border: none;
-      padding: 4px 10px;
-      border-radius: 4px;
+      padding: 7px 12px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 14px;
     }
 
     #logoutBtn {
@@ -83,21 +88,23 @@
     }
 
     nav {
-      margin-top: 8px;
+      margin-top: 10px;
       display: flex;
       justify-content: center;
       gap: 10px;
       padding-bottom: 8px;
+      flex-wrap: wrap;
     }
 
     .nav-btn {
       background: white;
       color: #4A90E2;
       border: none;
-      padding: 6px 12px;
+      padding: 7px 14px;
       border-radius: 20px;
       cursor: pointer;
       font-size: 14px;
+      font-weight: 700;
     }
 
     .nav-btn.active {
@@ -109,7 +116,7 @@
        區塊 / 卡片
        ========================= */
     .section {
-      width: 90%;
+      width: 92%;
       margin: 20px auto;
       text-align: center;
     }
@@ -117,43 +124,54 @@
     .card-container {
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      width: 90%;
+      gap: 18px;
+      width: 92%;
       margin: 0 auto 40px auto;
     }
 
     .card {
       background: rgba(255,255,255,0.95);
       color: #333;
-      padding: 20px;
+      padding: 18px 18px 16px;
       border-radius: 12px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.35);
-      width: 80%;
+      width: 86%;
       margin: 0 auto;
       text-align: left;
+    }
+
+    .card h3 {
+      margin: 0 0 8px 0;
     }
 
     .card button {
       background: #4A90E2;
       color: white;
       border: none;
-      padding: 6px 14px;
-      border-radius: 5px;
+      padding: 7px 14px;
+      border-radius: 6px;
       cursor: pointer;
       margin-top: 10px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .btn-secondary {
+      background: #2c3e50;
     }
 
     .detail {
       margin-top: 10px;
       background: #eef6ff;
       border-left: 4px solid #4A90E2;
-      padding: 10px;
+      padding: 10px 12px;
       display: none;
+      border-radius: 6px;
+      color: #1b1b1b;
+      line-height: 1.6;
     }
 
-    .detail.show {
-      display: block;
-    }
+    .detail.show { display: block; }
 
     .hidden { display: none; }
 
@@ -161,107 +179,114 @@
     .active-page { display: block; }
 
     /* =========================
-       首頁（主旨/公告）- 新增
+       登入前：主旨版面（更正式、字大）
        ========================= */
     .hero {
       width: 92%;
+      margin: 26px auto 12px;
       max-width: 980px;
-      margin: 28px auto 10px;
-      padding: 22px 20px;
-      border-radius: 16px;
-      background: rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(255,255,255,0.18);
-      backdrop-filter: blur(3px);
       text-align: left;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      background: rgba(0,0,0,0.38);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 16px;
+      padding: 20px 18px;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.35);
     }
 
     .hero h2 {
       margin: 0 0 10px 0;
-      font-size: 28px;
+      font-size: 26px;
       letter-spacing: 0.5px;
-      color: #fff;
     }
 
     .hero p {
-      margin: 10px 0 0 0;
+      margin: 10px 0;
       font-size: 16px;
-      line-height: 1.75;
-      color: rgba(255,255,255,0.92);
-    }
-
-    .hero .sub {
-      margin-top: 10px;
-      font-size: 15px;
-      color: rgba(255,255,255,0.88);
-    }
-
-    .hero .pill-row {
-      margin-top: 14px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .pill {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 13px;
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.18);
+      line-height: 1.85;
       color: rgba(255,255,255,0.95);
     }
 
-    .note {
-      width: 92%;
-      max-width: 980px;
-      margin: 14px auto 26px;
-      padding: 16px 18px;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.16);
+    .hero .bullets {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: rgba(255,255,255,0.95);
+      line-height: 1.85;
+      font-size: 16px;
+    }
+
+    .tagline {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(74,144,226,0.18);
+      border: 1px solid rgba(74,144,226,0.35);
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    /* =========================
+       表單（新增活動 / 店家合作）
+       ========================= */
+    .form-box {
+      width: 86%;
+      margin: 0 auto 18px;
+      background: rgba(255,255,255,0.95);
+      color: #333;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.28);
       text-align: left;
     }
 
-    .note h3 {
-      margin: 0 0 10px 0;
-      font-size: 18px;
-      color: #fff;
-    }
+    .form-box h3 { margin: 0 0 10px; }
 
-    .note ul {
-      margin: 0;
-      padding-left: 18px;
-      color: rgba(255,255,255,0.92);
-      line-height: 1.8;
-      font-size: 15px;
-    }
-
-    .note .small {
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
       margin-top: 10px;
+    }
+
+    .form-box label {
       font-size: 13px;
-      color: rgba(255,255,255,0.78);
-      line-height: 1.7;
+      font-weight: 700;
+      color: #2c3e50;
+      display: block;
+      margin-bottom: 6px;
     }
 
-    .role-box {
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: rgba(0,0,0,0.35);
-      border: 1px solid rgba(255,255,255,0.14);
+    .form-box input,
+    .form-box textarea,
+    .form-box select {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #d0d7de;
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 14px;
+      outline: none;
     }
 
-    .role-box strong {
-      color: #fff;
+    .form-box textarea { min-height: 90px; resize: vertical; }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 12px;
+      flex-wrap: wrap;
     }
 
-    @media (max-width: 600px) {
-      .card { width: 95%; }
-      nav { flex-wrap: wrap; }
-      .hero h2 { font-size: 24px; }
-      .hero p { font-size: 15px; }
+    .hint {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #5b6772;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 720px) {
+      .card, .form-box { width: 95%; }
+      .form-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -269,13 +294,12 @@
 <body>
 
 <header>
-  <h1>系學會 x 店家平台</h1>
+  <h1>系學會 x 店家合作平台</h1>
 
   <!-- 登入 -->
   <div id="loginArea">
-    <input id="nameInput" placeholder="輸入暱稱">
-    <select id="roleSelect">
-      <option value="student">學生</option>
+    <input id="nameInput" placeholder="輸入名稱（例：電子系學會 / XX飲料店）" />
+    <select id="roleSelect" aria-label="選擇身分">
       <option value="assoc">系學會</option>
       <option value="store">店家</option>
     </select>
@@ -292,78 +316,126 @@
   <nav id="navBar" class="hidden">
     <button class="nav-btn active" data-target="home">首頁</button>
     <button class="nav-btn" data-target="activities">活動列表</button>
-    <button class="nav-btn" data-target="stores">店家專區</button>
+    <button class="nav-btn" data-target="cooperate">合作方案</button>
   </nav>
 </header>
 
 <!-- 首頁 -->
 <section id="home" class="page active-page">
-  <div class="section" id="homeContent">
-    <p>請先登入以查看內容</p>
-  </div>
+  <div class="section" id="homeContent"></div>
 </section>
 
-<!-- 活動列表（恢復原本大意） -->
+<!-- 活動列表 -->
 <section id="activities" class="page">
   <h2 class="section">活動列表</h2>
+
+  <!-- 系學會：新增活動表單（登入後依身分顯示） -->
+  <div id="addActivityBox" class="form-box hidden">
+    <h3>新增活動（系學會）</h3>
+
+    <div class="form-row">
+      <div>
+        <label for="actTitle">活動名稱</label>
+        <input id="actTitle" placeholder="例：迎新茶會 / 系烤 / 宿營" />
+      </div>
+      <div>
+        <label for="actDate">日期與時間</label>
+        <input id="actDate" placeholder="例：2026/01/10 18:00" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div>
+        <label for="actLocation">地點</label>
+        <input id="actLocation" placeholder="例：大禮堂 / 系館前廣場" />
+      </div>
+      <div>
+        <label for="actPackages">可選方案（用逗號分隔）</label>
+        <input id="actPackages" placeholder="例：冠名贊助, 物資贊助, 攤位合作" />
+      </div>
+    </div>
+
+    <div style="margin-top:10px;">
+      <label for="actDesc">活動簡介（對外說明）</label>
+      <textarea id="actDesc" placeholder="請用正式、清楚的方式描述活動內容、受眾與合作價值。"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button id="addActivityBtn">新增活動</button>
+      <button id="resetActivityBtn" class="btn-secondary">清空</button>
+    </div>
+
+    <div class="hint">
+      建議：方案可包含「曝光項目、可提供資源、合作形式」等，讓店家更容易快速評估是否配合。
+    </div>
+  </div>
+
   <div id="activityList" class="card-container"></div>
 </section>
 
-<!-- 店家專區 -->
-<section id="stores" class="page">
-  <h2 class="section">店家專區</h2>
-  <div id="storeList" class="card-container"></div>
+<!-- 合作方案（店家功能主要在此） -->
+<section id="cooperate" class="page">
+  <h2 class="section">合作方案</h2>
+  <div class="section" id="cooperateIntro"></div>
+  <div id="cooperateList" class="card-container"></div>
 </section>
 
 <script>
-  const activities = [
+  /* =========================
+     基本資料（含 localStorage）
+     ========================= */
+  const STORAGE_KEY = "assoc_store_platform_activities_v1";
+
+  const defaultActivities = [
     {
+      id: crypto.randomUUID(),
       title: "系學會迎新活動",
-      info: "時間：10/1｜地點：大禮堂",
-      detail: "迎接新生，介紹系學會、抽獎、學長姐分享。"
+      date: "2026/01/05 18:30",
+      location: "大禮堂",
+      desc: "迎接新生並介紹系上資源與系學會運作，安排抽獎、學長姐分享與互動交流，建立新生歸屬感並促進系內凝聚。",
+      packages: ["冠名贊助", "物資贊助", "攤位合作"]
     },
     {
+      id: crypto.randomUUID(),
       title: "店家合作說明會",
-      info: "時間：10/10｜地點：系辦",
-      detail: "說明系學會與周邊店家的合作與贊助方式。"
+      date: "2026/01/12 12:10",
+      location: "系辦會議室",
+      desc: "由系學會統整本學期活動規劃與宣傳資源，說明合作方式、曝光渠道與贊助回饋，建立長期互惠的合作關係。",
+      packages: ["合作洽談", "宣傳曝光", "活動贊助"]
     }
   ];
 
-  const stores = [
-    {
-      title: "飲料店 A",
-      info: "學生 9 折優惠",
-      detail: "憑學生證即可享有優惠。"
-    },
-    {
-      title: "餐廳 B",
-      info: "套餐折扣",
-      detail: "活動期間提供套餐優惠。"
+  function loadActivities() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultActivities));
+        return [...defaultActivities];
+      }
+      const data = JSON.parse(raw);
+      if (!Array.isArray(data)) throw new Error("Activities data invalid");
+      return data;
+    } catch (e) {
+      // 若資料毀損，回復預設
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultActivities));
+      return [...defaultActivities];
     }
-  ];
-
-  function renderCards(data, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = "";
-    data.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <h3>${item.title}</h3>
-        <p>${item.info}</p>
-        <button>查看詳情</button>
-        <div class="detail">${item.detail}</div>
-      `;
-      card.querySelector("button").onclick = () => {
-        card.querySelector(".detail").classList.toggle("show");
-      };
-      container.appendChild(card);
-    });
   }
 
-  renderCards(activities, "activityList");
-  renderCards(stores, "storeList");
+  function saveActivities(list) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  }
 
+  let activities = loadActivities();
+
+  /* =========================
+     使用者狀態
+     ========================= */
+  let currentUser = null; // { name, role }
+
+  /* =========================
+     DOM 參照
+     ========================= */
   const loginBtn = document.getElementById("loginBtn");
   const logoutBtn = document.getElementById("logoutBtn");
   const loginArea = document.getElementById("loginArea");
@@ -375,130 +447,351 @@
   const pages = document.querySelectorAll(".page");
   const navBtns = document.querySelectorAll(".nav-btn");
 
-  // 登入前首頁內容（新增：正式主旨 + 更豐富說明）
-  function renderHomeBeforeLogin() {
-    const home = document.getElementById("homeContent");
-    home.innerHTML = `
+  const homeContent = document.getElementById("homeContent");
+  const activityList = document.getElementById("activityList");
+
+  const addActivityBox = document.getElementById("addActivityBox");
+  const actTitle = document.getElementById("actTitle");
+  const actDate = document.getElementById("actDate");
+  const actLocation = document.getElementById("actLocation");
+  const actPackages = document.getElementById("actPackages");
+  const actDesc = document.getElementById("actDesc");
+  const addActivityBtn = document.getElementById("addActivityBtn");
+  const resetActivityBtn = document.getElementById("resetActivityBtn");
+
+  const cooperateIntro = document.getElementById("cooperateIntro");
+  const cooperateList = document.getElementById("cooperateList");
+
+  /* =========================
+     UI：登入前首頁主旨（正式、字大）
+     ========================= */
+  function renderPreLoginHome() {
+    homeContent.innerHTML = `
       <div class="hero">
-        <h2>系學會 × 店家合作平台</h2>
+        <h2>平台主旨：建立「系學會 × 店家」清晰、有效、可追蹤的合作流程</h2>
         <p>
-          本平台旨在建立「系學會、學生與在地店家」之間的合作管道，透過活動資訊與合作內容的集中呈現，
-          讓店家能更清楚掌握合作方式與曝光資源，也讓系學會能更有效率地統整贊助、優惠與活動推廣。
+          本平台提供系學會與校園周邊店家一個集中式窗口，用以整合活動資訊、合作方案與聯絡流程，
+          讓合作從「看得到活動」到「選得到方案」再到「聯絡可落地」，全程更透明、更有效率。
         </p>
-        <p class="sub">
-          我們期待以透明、可追蹤、可延伸的方式，讓每一次合作都有明確的目標與回饋，促進校園與在地商圈的長期互惠。
-        </p>
-        <div class="pill-row">
-          <span class="pill">合作資訊集中化</span>
-          <span class="pill">活動曝光與宣傳</span>
-          <span class="pill">優惠方案與回饋</span>
-          <span class="pill">長期互惠合作</span>
-        </div>
-      </div>
-
-      <div class="note">
-        <h3>平台功能概要</h3>
-        <ul>
-          <li><strong>活動列表：</strong>統整系學會活動資訊與重點內容，便於對外說明與宣傳。</li>
-          <li><strong>店家專區：</strong>展示合作店家、優惠內容與活動期間方案，提升學生觸及率。</li>
-          <li><strong>合作透明：</strong>以清楚結構呈現合作項目，降低溝通成本、提升合作效率。</li>
+        <div class="tagline">適用對象：系學會（活動建立與管理）｜店家（查看活動與選擇合作方案）</div>
+        <ul class="bullets">
+          <li><b>系學會端：</b>可新增活動並提供合作方案，統一對外呈現資訊，降低溝通成本。</li>
+          <li><b>店家端：</b>可瀏覽所有活動，針對特定活動選擇合作方案並直接發起聯絡，提高配合意願。</li>
+          <li><b>共同目標：</b>促進互惠合作，提升活動品質與宣傳效益，打造長期穩定的合作關係。</li>
         </ul>
-        <div class="small">
-          提醒：此為 Demo 示意頁面，用於呈現平台概念與版面架構；實際合作細節與權責內容可依系學會規範與店家需求調整。
-        </div>
+        <p style="margin-top:12px;opacity:.95;">
+          請於上方輸入名稱並選擇身分登入，以查看完整內容與功能。
+        </p>
       </div>
-
-      <p style="margin-top:10px; font-size:14px; color: rgba(255,255,255,0.9);">
-        請先登入以查看內容與功能導覽。
-      </p>
     `;
   }
 
-  // 登入後首頁內容（新增：簡介卡 + 依角色提示）
-  function renderHomeAfterLogin(role) {
-    const roleTextMap = {
-      student: {
-        title: "學生使用說明",
-        content: "您可在活動列表查看近期活動，在店家專區查看合作優惠與活動期間方案；後續可擴充報名、集點或優惠券功能。"
-      },
-      assoc: {
-        title: "系學會使用說明",
-        content: "您可用此平台統整活動資訊、合作店家與贊助內容；可延伸加入合作提案、檔期管理、曝光紀錄與結案回饋等模組。"
-      },
-      store: {
-        title: "店家使用說明",
-        content: "您可在此了解系學會活動安排與合作形式，並展示店家優惠方案；後續可加入合作申請、方案上架與宣傳素材提交。"
-      }
-    };
+  /* =========================
+     UI：登入後首頁（依身分顯示）
+     ========================= */
+  function renderPostLoginHome() {
+    const roleName = currentUser.role === "assoc" ? "系學會" : "店家";
+    const roleDesc = currentUser.role === "assoc"
+      ? "你可以在「活動列表」新增活動，並設定合作方案；新增後店家會同步看見。"
+      : "你可以在「活動列表」查看所有活動，並在「合作方案」選擇想配合的方案並聯絡系學會。";
 
-    const box = roleTextMap[role] || roleTextMap.student;
-
-    const home = document.getElementById("homeContent");
-    home.innerHTML = `
+    homeContent.innerHTML = `
       <div class="hero">
-        <h2>平台概覽</h2>
-        <p>
-          歡迎使用「系學會 × 店家合作平台」。本平台用於彙整活動資訊、合作店家與優惠內容，
-          以降低溝通成本、提升宣傳效率，並建立可長期運作的合作機制。
-        </p>
+        <h2>您好，${currentUser.name}（${roleName}）</h2>
+        <p>${roleDesc}</p>
+        <div class="tagline">提示：活動資料會自動保存（重新整理也不會消失）</div>
+      </div>
+    `;
+  }
 
-        <div class="role-box">
-          <strong>${box.title}</strong>
-          <div style="margin-top:8px; color: rgba(255,255,255,0.92); line-height:1.75;">
-            ${box.content}
+  /* =========================
+     活動卡片渲染
+     ========================= */
+  function createActivityCard(act, mode) {
+    // mode: "view"（單純看） | "cooperate"（店家合作）
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const packages = Array.isArray(act.packages) && act.packages.length
+      ? act.packages
+      : ["合作洽談"];
+
+    const infoLine = `時間：${act.date || "未填"}｜地點：${act.location || "未填"}`;
+
+    if (mode === "cooperate") {
+      card.innerHTML = `
+        <h3>${act.title}</h3>
+        <p>${infoLine}</p>
+        <button type="button">查看活動簡介</button>
+        <div class="detail">${act.desc || "（尚未提供活動簡介）"}</div>
+
+        <div style="margin-top:12px;">
+          <div style="font-weight:800;color:#2c3e50;margin-bottom:8px;">選擇合作方案（店家）</div>
+
+          <div class="form-row" style="margin:0;">
+            <div>
+              <label>合作方案</label>
+              <select class="planSelect">
+                ${packages.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join("")}
+              </select>
+            </div>
+            <div>
+              <label>聯絡信箱（系學會）</label>
+              <input class="assocEmail" placeholder="例：eea@school.edu.tw（可先留空）" />
+            </div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <label>店家聯絡資訊（必填，讓系學會能回覆）</label>
+            <input class="storeContact" placeholder="例：電話 / IG / LINE / Email" />
+          </div>
+
+          <div style="margin-top:10px;">
+            <label>留言（合作需求與提供資源）</label>
+            <textarea class="storeMsg" placeholder="例：可提供飲品折扣、現場攤位、抽獎贊助，想配合哪個曝光方式等。"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="makeMailBtn">產生聯絡信件</button>
+          </div>
+
+          <div class="hint">
+            說明：本 Demo 會用 <b>mailto</b> 方式開啟你的預設信箱。若你之後要改成「站內訊息 / 表單送出」，我也能幫你做。
           </div>
         </div>
+      `;
 
-        <div class="pill-row">
-          <span class="pill">資訊一致</span>
-          <span class="pill">流程清楚</span>
-          <span class="pill">合作可延伸</span>
-        </div>
-      </div>
+      // 詳情開關
+      const detailBtn = card.querySelector("button");
+      const detail = card.querySelector(".detail");
+      detailBtn.onclick = () => detail.classList.toggle("show");
 
-      <div class="note">
-        <h3>快速導覽</h3>
-        <ul>
-          <li>前往 <strong>活動列表</strong>：查看活動時間、地點與簡介。</li>
-          <li>前往 <strong>店家專區</strong>：查看合作店家與優惠方案內容。</li>
-        </ul>
-        <div class="small">
-          建議：若要對外給店家展示，可在「店家合作說明會」卡片中補上合作窗口、合作流程與宣傳版位資訊。
-        </div>
+      // 產生 mailto
+      const makeMailBtn = card.querySelector(".makeMailBtn");
+      makeMailBtn.onclick = () => {
+        const plan = card.querySelector(".planSelect").value;
+        const assocEmail = card.querySelector(".assocEmail").value.trim();
+        const storeContact = card.querySelector(".storeContact").value.trim();
+        const msg = card.querySelector(".storeMsg").value.trim();
+
+        if (!storeContact) {
+          alert("請先填寫：店家聯絡資訊（讓系學會能回覆）");
+          return;
+        }
+
+        const subject = `【合作洽談】${act.title}｜方案：${plan}`;
+        const body = [
+          `系學會您好，我是：${currentUser.name}`,
+          ``,
+          `我想配合活動：${act.title}`,
+          `選擇方案：${plan}`,
+          ``,
+          `店家聯絡資訊：${storeContact}`,
+          ``,
+          `留言：`,
+          msg || "（無）",
+          ``,
+          `—`,
+          `此信由「系學會 x 店家合作平台」產生（Demo）`
+        ].join("\n");
+
+        const to = assocEmail || "";
+        const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailto;
+      };
+
+      return card;
+    }
+
+    // view mode
+    card.innerHTML = `
+      <h3>${act.title}</h3>
+      <p>${infoLine}</p>
+      <button type="button">查看詳情</button>
+      <div class="detail">
+        <div style="margin-bottom:8px;"><b>活動簡介：</b><br>${escapeHtml(act.desc || "（尚未提供活動簡介）").replaceAll("\n","<br>")}</div>
+        <div><b>合作方案：</b> ${packages.map(p => `<span style="display:inline-block;background:#dfefff;border:1px solid #b7d3ff;border-radius:999px;padding:3px 10px;margin:4px 6px 0 0;">${escapeHtml(p)}</span>`).join("")}</div>
       </div>
     `;
+
+    const btn = card.querySelector("button");
+    const detail = card.querySelector(".detail");
+    btn.onclick = () => detail.classList.toggle("show");
+    return card;
   }
 
-  // 初始化：先顯示登入前主旨頁
-  renderHomeBeforeLogin();
+  function renderActivitiesPage() {
+    activityList.innerHTML = "";
+    activities.forEach(act => activityList.appendChild(createActivityCard(act, "view")));
+  }
 
+  function renderCooperatePage() {
+    cooperateList.innerHTML = "";
+
+    if (!currentUser) {
+      cooperateIntro.innerHTML = `<p style="opacity:.95;">請先登入後使用合作功能。</p>`;
+      return;
+    }
+
+    if (currentUser.role === "assoc") {
+      cooperateIntro.innerHTML = `
+        <div class="hero" style="margin-top:10px;">
+          <h2 style="font-size:22px;margin:0 0 6px;">系學會端說明</h2>
+          <p style="margin:6px 0;">
+            店家會在此頁面針對活動選擇方案並產生聯絡信件。你可透過「活動列表」新增活動與方案，讓店家更容易選擇與配合。
+          </p>
+        </div>
+      `;
+      // 系學會端也能看到同一份活動清單（但不顯示店家表單）
+      activities.forEach(act => cooperateList.appendChild(createActivityCard(act, "view")));
+      return;
+    }
+
+    // 店家端
+    cooperateIntro.innerHTML = `
+      <div class="hero" style="margin-top:10px;">
+        <h2 style="font-size:22px;margin:0 0 6px;">店家端操作</h2>
+        <p style="margin:6px 0;">
+          請於下方選擇欲配合的活動與合作方案，填寫你的聯絡資訊與留言後，即可一鍵產生聯絡信件。
+        </p>
+      </div>
+    `;
+
+    activities.forEach(act => cooperateList.appendChild(createActivityCard(act, "cooperate")));
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  /* =========================
+     系學會：新增活動
+     ========================= */
+  function clearAddActivityForm() {
+    actTitle.value = "";
+    actDate.value = "";
+    actLocation.value = "";
+    actPackages.value = "";
+    actDesc.value = "";
+  }
+
+  addActivityBtn.onclick = () => {
+    if (!currentUser || currentUser.role !== "assoc") {
+      alert("此功能僅限系學會使用。");
+      return;
+    }
+
+    const title = actTitle.value.trim();
+    const date = actDate.value.trim();
+    const location = actLocation.value.trim();
+    const desc = actDesc.value.trim();
+    const packagesRaw = actPackages.value.trim();
+
+    if (!title) return alert("請填寫：活動名稱");
+    if (!date) return alert("請填寫：日期與時間");
+    if (!location) return alert("請填寫：地點");
+    if (!desc) return alert("請填寫：活動簡介");
+
+    const packages = packagesRaw
+      ? packagesRaw.split(",").map(s => s.trim()).filter(Boolean)
+      : ["合作洽談"];
+
+    const newAct = {
+      id: crypto.randomUUID(),
+      title, date, location, desc, packages
+    };
+
+    activities = [newAct, ...activities];
+    saveActivities(activities);
+
+    clearAddActivityForm();
+    renderActivitiesPage();
+    renderCooperatePage();
+    alert("新增成功！店家端也會同步看到此活動。");
+  };
+
+  resetActivityBtn.onclick = clearAddActivityForm;
+
+  /* =========================
+     登入 / 登出
+     ========================= */
   loginBtn.onclick = () => {
     const name = nameInput.value.trim();
-    if (!name) return alert("請輸入暱稱");
+    const role = roleSelect.value;
+
+    if (!name) return alert("請輸入名稱");
+    if (role !== "assoc" && role !== "store") return alert("請選擇正確身分");
+
+    currentUser = { name, role };
 
     loginArea.classList.add("hidden");
     userInfo.classList.remove("hidden");
     navBar.classList.remove("hidden");
 
-    const roleText = roleSelect.options[roleSelect.selectedIndex].text;
-    const role = roleSelect.value;
+    const roleText = role === "assoc" ? "系學會" : "店家";
+    welcomeText.textContent = `您好，${name}（${roleText}）`;
 
-    welcomeText.textContent = `嗨 ${name}（${roleText}）`;
+    // 依身分顯示新增活動
+    addActivityBox.classList.toggle("hidden", role !== "assoc");
 
-    // 登入後：更新首頁內容（更正式、依角色提示）
-    renderHomeAfterLogin(role);
+    renderPostLoginHome();
+    renderActivitiesPage();
+    renderCooperatePage();
   };
 
-  logoutBtn.onclick = () => location.reload();
+  logoutBtn.onclick = () => {
+    // 不刪資料（保留 localStorage），只做登出
+    currentUser = null;
 
+    loginArea.classList.remove("hidden");
+    userInfo.classList.add("hidden");
+    navBar.classList.add("hidden");
+
+    // 回到首頁
+    pages.forEach(p => p.classList.remove("active-page"));
+    document.getElementById("home").classList.add("active-page");
+    navBtns.forEach(b => b.classList.remove("active"));
+    document.querySelector('.nav-btn[data-target="home"]').classList.add("active");
+
+    addActivityBox.classList.add("hidden");
+    renderPreLoginHome();
+    cooperateIntro.innerHTML = "";
+    cooperateList.innerHTML = "";
+  };
+
+  /* =========================
+     導覽切換（未登入不允許切其他頁）
+     ========================= */
   navBtns.forEach(btn => {
     btn.onclick = () => {
+      if (!currentUser) {
+        alert("請先登入後查看功能頁面。");
+        return;
+      }
+
       navBtns.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
+
       pages.forEach(p => p.classList.remove("active-page"));
       document.getElementById(btn.dataset.target).classList.add("active-page");
+
+      // 切頁時同步刷新（避免資料不同步）
+      if (btn.dataset.target === "activities") renderActivitiesPage();
+      if (btn.dataset.target === "cooperate") renderCooperatePage();
+      if (btn.dataset.target === "home") renderPostLoginHome();
     };
   });
+
+  /* =========================
+     初始化：登入前首頁
+     ========================= */
+  renderPreLoginHome();
+  renderActivitiesPage(); // 先渲染好（登入後更快）
 </script>
 
 </body>
