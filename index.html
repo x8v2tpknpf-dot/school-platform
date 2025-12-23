@@ -6,7 +6,7 @@
 
   <style>
     /* =========================
-       全站背景（滿版、亮一點）
+       全站背景（滿版、清楚）
        ========================= */
     body {
       font-family: sans-serif;
@@ -130,6 +130,29 @@
       box-shadow: 0 6px 20px rgba(0,0,0,0.35);
       width: 80%;
       margin: 0 auto;
+      text-align: left;
+    }
+
+    .card button {
+      background: #4A90E2;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .detail {
+      margin-top: 10px;
+      background: #eef6ff;
+      border-left: 4px solid #4A90E2;
+      padding: 10px;
+      display: none;
+    }
+
+    .detail.show {
+      display: block;
     }
 
     .hidden { display: none; }
@@ -149,7 +172,7 @@
 <header>
   <h1>系學會 x 店家平台</h1>
 
-  <!-- 登入區 -->
+  <!-- 登入 -->
   <div id="loginArea">
     <input id="nameInput" placeholder="輸入暱稱">
     <select id="roleSelect">
@@ -160,7 +183,7 @@
     <button id="loginBtn">登入</button>
   </div>
 
-  <!-- 已登入 -->
+  <!-- 使用者資訊 -->
   <div id="userInfo" class="hidden">
     <span id="welcomeText"></span>
     <button id="logoutBtn">登出</button>
@@ -181,23 +204,67 @@
   </div>
 </section>
 
-<!-- 活動 -->
+<!-- 活動列表（恢復原本大意） -->
 <section id="activities" class="page">
-  <div class="section">
-    <div class="card">迎新活動｜10/1 大禮堂</div>
-    <div class="card">合作說明會｜10/10 系辦</div>
-  </div>
+  <h2 class="section">活動列表</h2>
+  <div id="activityList" class="card-container"></div>
 </section>
 
-<!-- 店家 -->
+<!-- 店家專區 -->
 <section id="stores" class="page">
-  <div class="section">
-    <div class="card">飲料店 A｜學生 9 折</div>
-    <div class="card">餐廳 B｜套餐優惠</div>
-  </div>
+  <h2 class="section">店家專區</h2>
+  <div id="storeList" class="card-container"></div>
 </section>
 
 <script>
+  const activities = [
+    {
+      title: "系學會迎新活動",
+      info: "時間：10/1｜地點：大禮堂",
+      detail: "迎接新生，介紹系學會、抽獎、學長姐分享。"
+    },
+    {
+      title: "店家合作說明會",
+      info: "時間：10/10｜地點：系辦",
+      detail: "說明系學會與周邊店家的合作與贊助方式。"
+    }
+  ];
+
+  const stores = [
+    {
+      title: "飲料店 A",
+      info: "學生 9 折優惠",
+      detail: "憑學生證即可享有優惠。"
+    },
+    {
+      title: "餐廳 B",
+      info: "套餐折扣",
+      detail: "活動期間提供套餐優惠。"
+    }
+  ];
+
+  function renderCards(data, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+    data.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <h3>${item.title}</h3>
+        <p>${item.info}</p>
+        <button>查看詳情</button>
+        <div class="detail">${item.detail}</div>
+      `;
+      card.querySelector("button").onclick = () => {
+        card.querySelector(".detail").classList.toggle("show");
+      };
+      container.appendChild(card);
+    });
+  }
+
+  renderCards(activities, "activityList");
+  renderCards(stores, "storeList");
+
   const loginBtn = document.getElementById("loginBtn");
   const logoutBtn = document.getElementById("logoutBtn");
   const loginArea = document.getElementById("loginArea");
@@ -212,11 +279,9 @@
   loginBtn.onclick = () => {
     const name = nameInput.value.trim();
     if (!name) return alert("請輸入暱稱");
-
     loginArea.classList.add("hidden");
     userInfo.classList.remove("hidden");
     navBar.classList.remove("hidden");
-
     welcomeText.textContent = `嗨 ${name}（${roleSelect.options[roleSelect.selectedIndex].text}）`;
   };
 
