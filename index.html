@@ -6,9 +6,8 @@
 
   <style>
     /* =========================
-       全站背景（高品質滿版）
+       全站背景（滿版、亮一點）
        ========================= */
-
     body {
       font-family: sans-serif;
       margin: 0;
@@ -18,42 +17,28 @@
       position: relative;
     }
 
-    /* 滿版背景圖片（高品質顯示） */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
-
       background-image: url("logo1.jpg");
       background-repeat: no-repeat;
       background-position: center;
       background-size: cover;
-
-      /* 視覺校正（清晰、穩定） */
       opacity: 0.45;
-      filter:
-        brightness(1.25)
-        contrast(1.08)
-        saturate(0.95);
-
-      /* 關鍵：避免模糊 */
-      image-rendering: -webkit-optimize-contrast;
-      image-rendering: crisp-edges;
-
+      filter: brightness(1.25) contrast(1.08) saturate(0.95);
       pointer-events: none;
       z-index: 0;
     }
 
-    /* 內容層 */
     body > * {
       position: relative;
       z-index: 1;
     }
 
     /* =========================
-       Header / 導覽
+       Header / 登入 / 導覽
        ========================= */
-
     header {
       background: rgba(74, 144, 226, 0.92);
       color: white;
@@ -121,9 +106,8 @@
     }
 
     /* =========================
-       卡片
+       區塊 / 卡片
        ========================= */
-
     .section {
       width: 90%;
       margin: 20px auto;
@@ -139,54 +123,23 @@
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255,255,255,0.95);
       color: #333;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.35);
       width: 80%;
       margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
     }
 
-    .card button {
-      background: #4A90E2;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      align-self: flex-start;
-    }
+    .hidden { display: none; }
 
-    .detail {
-      background: #eef6ff;
-      border-left: 4px solid #4A90E2;
-      padding: 10px;
-      display: none;
-    }
-
-    .detail.show {
-      display: block;
-    }
-
-    .page {
-      display: none;
-    }
-
-    .active-page {
-      display: block;
-    }
+    .page { display: none; }
+    .active-page { display: block; }
 
     @media (max-width: 600px) {
-      .card {
-        width: 95%;
-      }
-      nav {
-        flex-wrap: wrap;
-      }
+      .card { width: 95%; }
+      nav { flex-wrap: wrap; }
     }
   </style>
 </head>
@@ -195,11 +148,89 @@
 
 <header>
   <h1>系學會 x 店家平台</h1>
+
+  <!-- 登入區 -->
+  <div id="loginArea">
+    <input id="nameInput" placeholder="輸入暱稱">
+    <select id="roleSelect">
+      <option value="student">學生</option>
+      <option value="assoc">系學會</option>
+      <option value="store">店家</option>
+    </select>
+    <button id="loginBtn">登入</button>
+  </div>
+
+  <!-- 已登入 -->
+  <div id="userInfo" class="hidden">
+    <span id="welcomeText"></span>
+    <button id="logoutBtn">登出</button>
+  </div>
+
+  <!-- 導覽 -->
+  <nav id="navBar" class="hidden">
+    <button class="nav-btn active" data-target="home">首頁</button>
+    <button class="nav-btn" data-target="activities">活動列表</button>
+    <button class="nav-btn" data-target="stores">店家專區</button>
+  </nav>
 </header>
 
-<section class="section">
-  <p>背景已套用高品質顯示設定</p>
+<!-- 首頁 -->
+<section id="home" class="page active-page">
+  <div class="section" id="homeContent">
+    <p>請先登入以查看內容</p>
+  </div>
 </section>
+
+<!-- 活動 -->
+<section id="activities" class="page">
+  <div class="section">
+    <div class="card">迎新活動｜10/1 大禮堂</div>
+    <div class="card">合作說明會｜10/10 系辦</div>
+  </div>
+</section>
+
+<!-- 店家 -->
+<section id="stores" class="page">
+  <div class="section">
+    <div class="card">飲料店 A｜學生 9 折</div>
+    <div class="card">餐廳 B｜套餐優惠</div>
+  </div>
+</section>
+
+<script>
+  const loginBtn = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const loginArea = document.getElementById("loginArea");
+  const userInfo = document.getElementById("userInfo");
+  const navBar = document.getElementById("navBar");
+  const welcomeText = document.getElementById("welcomeText");
+  const nameInput = document.getElementById("nameInput");
+  const roleSelect = document.getElementById("roleSelect");
+  const pages = document.querySelectorAll(".page");
+  const navBtns = document.querySelectorAll(".nav-btn");
+
+  loginBtn.onclick = () => {
+    const name = nameInput.value.trim();
+    if (!name) return alert("請輸入暱稱");
+
+    loginArea.classList.add("hidden");
+    userInfo.classList.remove("hidden");
+    navBar.classList.remove("hidden");
+
+    welcomeText.textContent = `嗨 ${name}（${roleSelect.options[roleSelect.selectedIndex].text}）`;
+  };
+
+  logoutBtn.onclick = () => location.reload();
+
+  navBtns.forEach(btn => {
+    btn.onclick = () => {
+      navBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      pages.forEach(p => p.classList.remove("active-page"));
+      document.getElementById(btn.dataset.target).classList.add("active-page");
+    };
+  });
+</script>
 
 </body>
 </html>
