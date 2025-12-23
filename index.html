@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>系學會 x 店家平台 Demo</title>
 
-  <style>f
+  <style>
     /* =========================
        全站背景（黑色 + 半透明 Logo）
        ========================= */
@@ -14,25 +14,25 @@
       margin: 0;
       color: #eee;
       background-color: #111;
-      min-height: 100vh;
       position: relative;
+      min-height: 100vh;
     }
 
-    /* 背景圖片層（獨立一層，不影響內容） */
+    /* 背景圖片層（不影響內容） */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
-      background-image: url("logo1.jpg"); /* ⚠️ 檔名一定要完全一樣 */
+      background-image: url("logo1.jpg"); /* ← 確認檔名 */
       background-repeat: no-repeat;
       background-position: center;
       background-size: 420px;
-      opacity: 0.15;              /* 透明度 */
+      opacity: 0.15;
       pointer-events: none;
       z-index: 0;
     }
 
-    /* 所有實際內容蓋在背景上 */
+    /* 所有內容在背景之上 */
     body > * {
       position: relative;
       z-index: 1;
@@ -85,6 +85,7 @@
       background: #c0392b;
     }
 
+    /* 導覽列 */
     nav {
       margin-top: 8px;
       display: flex;
@@ -119,7 +120,6 @@
     }
 
     .section-title {
-      text-align: center;
       margin: 20px 0 10px;
     }
 
