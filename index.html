@@ -161,88 +161,107 @@
     .active-page { display: block; }
 
     /* =========================
-       首頁介紹文字（新增）
+       首頁（主旨/公告）- 新增
        ========================= */
-    .hero-card {
-      background: rgba(255,255,255,0.92);
-      color: #222;
-      border-radius: 14px;
-      box-shadow: 0 10px 26px rgba(0,0,0,0.35);
-      width: 90%;
+    .hero {
+      width: 92%;
       max-width: 980px;
-      margin: 20px auto 30px;
-      padding: 22px 18px;
+      margin: 28px auto 10px;
+      padding: 22px 20px;
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(3px);
       text-align: left;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     }
 
-    .hero-title {
-      margin: 0 0 8px 0;
-      font-size: 22px;
-      line-height: 1.25;
-      color: #0b2b4d;
+    .hero h2 {
+      margin: 0 0 10px 0;
+      font-size: 28px;
+      letter-spacing: 0.5px;
+      color: #fff;
     }
 
-    .hero-sub {
-      margin: 0 0 14px 0;
-      font-size: 14px;
-      color: #2d3b45;
-      opacity: 0.95;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-top: 14px;
-    }
-
-    .hero-box {
-      background: #f3f8ff;
-      border: 1px solid rgba(74,144,226,0.25);
-      border-radius: 12px;
-      padding: 14px 14px 12px;
-    }
-
-    .hero-box h3 {
-      margin: 0 0 6px 0;
+    .hero p {
+      margin: 10px 0 0 0;
       font-size: 16px;
-      color: #0b2b4d;
+      line-height: 1.75;
+      color: rgba(255,255,255,0.92);
     }
 
-    .hero-box p, .hero-box li {
-      margin: 6px 0;
-      color: #22313a;
-      font-size: 14px;
-      line-height: 1.6;
+    .hero .sub {
+      margin-top: 10px;
+      font-size: 15px;
+      color: rgba(255,255,255,0.88);
     }
 
-    .hero-pill {
+    .hero .pill-row {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
       display: inline-block;
-      background: rgba(74,144,226,0.12);
-      color: #0b2b4d;
-      border: 1px solid rgba(74,144,226,0.25);
       padding: 6px 10px;
       border-radius: 999px;
       font-size: 13px;
-      margin: 10px 8px 0 0;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: rgba(255,255,255,0.95);
     }
 
-    .hero-note {
-      margin-top: 14px;
-      background: rgba(0,63,136,0.08);
-      border-left: 4px solid #003f88;
-      padding: 12px 12px;
-      border-radius: 10px;
-      color: #1d2b34;
+    .note {
+      width: 92%;
+      max-width: 980px;
+      margin: 14px auto 26px;
+      padding: 16px 18px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.16);
+      text-align: left;
+    }
+
+    .note h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+      color: #fff;
+    }
+
+    .note ul {
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .note .small {
+      margin-top: 10px;
       font-size: 13px;
+      color: rgba(255,255,255,0.78);
       line-height: 1.7;
+    }
+
+    .role-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+
+    .role-box strong {
+      color: #fff;
     }
 
     @media (max-width: 600px) {
       .card { width: 95%; }
       nav { flex-wrap: wrap; }
-      .hero-grid { grid-template-columns: 1fr; }
-      .hero-title { font-size: 20px; }
+      .hero h2 { font-size: 24px; }
+      .hero p { font-size: 15px; }
     }
   </style>
 </head>
@@ -355,52 +374,103 @@
   const roleSelect = document.getElementById("roleSelect");
   const pages = document.querySelectorAll(".page");
   const navBtns = document.querySelectorAll(".nav-btn");
-  const homeContent = document.getElementById("homeContent");
 
-  // ====== 新增：首頁介紹文案（登入後顯示） ======
-  function renderHomeIntro(name, roleText) {
-    homeContent.innerHTML = `
-      <div class="hero-card">
-        <h2 class="hero-title">系學會 × 店家合作平台（Demo）</h2>
-        <p class="hero-sub">
-          這裡是我們用來「整理活動資訊、媒合周邊店家合作」的示範首頁。
-          讓系學會、店家、同學都能用同一個介面快速對齊資訊與需求。
+  // 登入前首頁內容（新增：正式主旨 + 更豐富說明）
+  function renderHomeBeforeLogin() {
+    const home = document.getElementById("homeContent");
+    home.innerHTML = `
+      <div class="hero">
+        <h2>系學會 × 店家合作平台</h2>
+        <p>
+          本平台旨在建立「系學會、學生與在地店家」之間的合作管道，透過活動資訊與合作內容的集中呈現，
+          讓店家能更清楚掌握合作方式與曝光資源，也讓系學會能更有效率地統整贊助、優惠與活動推廣。
+        </p>
+        <p class="sub">
+          我們期待以透明、可追蹤、可延伸的方式，讓每一次合作都有明確的目標與回饋，促進校園與在地商圈的長期互惠。
+        </p>
+        <div class="pill-row">
+          <span class="pill">合作資訊集中化</span>
+          <span class="pill">活動曝光與宣傳</span>
+          <span class="pill">優惠方案與回饋</span>
+          <span class="pill">長期互惠合作</span>
+        </div>
+      </div>
+
+      <div class="note">
+        <h3>平台功能概要</h3>
+        <ul>
+          <li><strong>活動列表：</strong>統整系學會活動資訊與重點內容，便於對外說明與宣傳。</li>
+          <li><strong>店家專區：</strong>展示合作店家、優惠內容與活動期間方案，提升學生觸及率。</li>
+          <li><strong>合作透明：</strong>以清楚結構呈現合作項目，降低溝通成本、提升合作效率。</li>
+        </ul>
+        <div class="small">
+          提醒：此為 Demo 示意頁面，用於呈現平台概念與版面架構；實際合作細節與權責內容可依系學會規範與店家需求調整。
+        </div>
+      </div>
+
+      <p style="margin-top:10px; font-size:14px; color: rgba(255,255,255,0.9);">
+        請先登入以查看內容與功能導覽。
+      </p>
+    `;
+  }
+
+  // 登入後首頁內容（新增：簡介卡 + 依角色提示）
+  function renderHomeAfterLogin(role) {
+    const roleTextMap = {
+      student: {
+        title: "學生使用說明",
+        content: "您可在活動列表查看近期活動，在店家專區查看合作優惠與活動期間方案；後續可擴充報名、集點或優惠券功能。"
+      },
+      assoc: {
+        title: "系學會使用說明",
+        content: "您可用此平台統整活動資訊、合作店家與贊助內容；可延伸加入合作提案、檔期管理、曝光紀錄與結案回饋等模組。"
+      },
+      store: {
+        title: "店家使用說明",
+        content: "您可在此了解系學會活動安排與合作形式，並展示店家優惠方案；後續可加入合作申請、方案上架與宣傳素材提交。"
+      }
+    };
+
+    const box = roleTextMap[role] || roleTextMap.student;
+
+    const home = document.getElementById("homeContent");
+    home.innerHTML = `
+      <div class="hero">
+        <h2>平台概覽</h2>
+        <p>
+          歡迎使用「系學會 × 店家合作平台」。本平台用於彙整活動資訊、合作店家與優惠內容，
+          以降低溝通成本、提升宣傳效率，並建立可長期運作的合作機制。
         </p>
 
-        <span class="hero-pill">給店家：合作曝光更清楚</span>
-        <span class="hero-pill">給系學會：管理流程更方便</span>
-        <span class="hero-pill">給同學：活動與優惠一目了然</span>
-
-        <div class="hero-grid">
-          <div class="hero-box">
-            <h3>給店家看的重點</h3>
-            <p>我們希望把「合作方式」講清楚、做簡單：</p>
-            <ul>
-              <li>曝光：出現在活動頁、首頁推薦、店家專區</li>
-              <li>互惠：學生專屬優惠／限定套餐／折扣碼</li>
-              <li>合作：贊助物資、抽獎品、活動當天擺攤</li>
-            </ul>
-          </div>
-
-          <div class="hero-box">
-            <h3>給系學會看的重點</h3>
-            <p>把活動與合作集中管理，減少來回溝通成本：</p>
-            <ul>
-              <li>活動資訊統一公告，避免版本混亂</li>
-              <li>店家合作條件透明化，方便比較與決策</li>
-              <li>後續可擴充：表單、統計、審核、對帳</li>
-            </ul>
+        <div class="role-box">
+          <strong>${box.title}</strong>
+          <div style="margin-top:8px; color: rgba(255,255,255,0.92); line-height:1.75;">
+            ${box.content}
           </div>
         </div>
 
-        <div class="hero-note">
-          <strong>網站主旨：</strong>用一個簡單的平台，串起「系學會活動」與「周邊店家資源」，
-          讓合作更有效率、資訊更透明、同學更有感。<br/>
-          你目前登入身分：<strong>${name}</strong>（${roleText}）
+        <div class="pill-row">
+          <span class="pill">資訊一致</span>
+          <span class="pill">流程清楚</span>
+          <span class="pill">合作可延伸</span>
+        </div>
+      </div>
+
+      <div class="note">
+        <h3>快速導覽</h3>
+        <ul>
+          <li>前往 <strong>活動列表</strong>：查看活動時間、地點與簡介。</li>
+          <li>前往 <strong>店家專區</strong>：查看合作店家與優惠方案內容。</li>
+        </ul>
+        <div class="small">
+          建議：若要對外給店家展示，可在「店家合作說明會」卡片中補上合作窗口、合作流程與宣傳版位資訊。
         </div>
       </div>
     `;
   }
+
+  // 初始化：先顯示登入前主旨頁
+  renderHomeBeforeLogin();
 
   loginBtn.onclick = () => {
     const name = nameInput.value.trim();
@@ -411,10 +481,12 @@
     navBar.classList.remove("hidden");
 
     const roleText = roleSelect.options[roleSelect.selectedIndex].text;
+    const role = roleSelect.value;
+
     welcomeText.textContent = `嗨 ${name}（${roleText}）`;
 
-    // 新增：登入後替換首頁內容成介紹文案
-    renderHomeIntro(name, roleText);
+    // 登入後：更新首頁內容（更正式、依角色提示）
+    renderHomeAfterLogin(role);
   };
 
   logoutBtn.onclick = () => location.reload();
