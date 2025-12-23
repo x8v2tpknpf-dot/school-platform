@@ -6,7 +6,7 @@
 
   <style>
     /* =========================
-       全站背景（每一頁滿版 + 明亮）
+       全站背景（高品質滿版）
        ========================= */
 
     body {
@@ -18,7 +18,7 @@
       position: relative;
     }
 
-    /* 滿版背景圖片（所有頁面） */
+    /* 滿版背景圖片（高品質顯示） */
     body::before {
       content: "";
       position: fixed;
@@ -29,23 +29,29 @@
       background-position: center;
       background-size: cover;
 
-      /* 視覺調校（已幫你配好） */
+      /* 視覺校正（清晰、穩定） */
       opacity: 0.45;
-      filter: brightness(1.25) contrast(1.08) saturate(0.95);
-      background-blend-mode: overlay;
+      filter:
+        brightness(1.25)
+        contrast(1.08)
+        saturate(0.95);
+
+      /* 關鍵：避免模糊 */
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
 
       pointer-events: none;
       z-index: 0;
     }
 
-    /* 所有內容在背景之上 */
+    /* 內容層 */
     body > * {
       position: relative;
       z-index: 1;
     }
 
     /* =========================
-       Header / 登入 / 導覽
+       Header / 導覽
        ========================= */
 
     header {
@@ -115,7 +121,7 @@
     }
 
     /* =========================
-       區塊
+       卡片
        ========================= */
 
     .section {
@@ -123,15 +129,6 @@
       margin: 20px auto;
       text-align: center;
     }
-
-    .section-title {
-      text-align: center;
-      margin: 20px 0 10px;
-    }
-
-    /* =========================
-       卡片（直向）
-       ========================= */
 
     .card-container {
       display: flex;
@@ -175,14 +172,6 @@
       display: block;
     }
 
-    .hidden {
-      display: none;
-    }
-
-    /* =========================
-       分頁
-       ========================= */
-
     .page {
       display: none;
     }
@@ -191,15 +180,10 @@
       display: block;
     }
 
-    /* =========================
-       RWD
-       ========================= */
-
     @media (max-width: 600px) {
       .card {
         width: 95%;
       }
-
       nav {
         flex-wrap: wrap;
       }
@@ -211,78 +195,11 @@
 
 <header>
   <h1>系學會 x 店家平台</h1>
-
-  <div id="loginArea">
-    <input id="nameInput" type="text" placeholder="輸入暱稱" />
-    <select id="roleSelect">
-      <option value="student">學生</option>
-      <option value="assoc">系學會</option>
-      <option value="store">店家</option>
-    </select>
-    <button id="loginBtn">登入</button>
-  </div>
-
-  <div id="userInfo" class="hidden">
-    <span id="welcomeText"></span>
-    <button id="logoutBtn">登出</button>
-  </div>
-
-  <nav id="navBar" class="hidden">
-    <button class="nav-btn active" data-target="home">首頁</button>
-    <button class="nav-btn" data-target="activities">活動列表</button>
-    <button class="nav-btn" data-target="stores">店家專區</button>
-  </nav>
 </header>
 
-<section id="home" class="page active-page">
-  <div class="section" id="homeContent">
-    <p>請先登入以查看內容。</p>
-  </div>
+<section class="section">
+  <p>背景已套用高品質顯示設定</p>
 </section>
-
-<section id="activities" class="page">
-  <h2 class="section-title">活動列表</h2>
-  <div id="activityList" class="card-container"></div>
-</section>
-
-<section id="stores" class="page">
-  <h2 class="section-title">店家專區</h2>
-  <div id="storeList" class="card-container"></div>
-</section>
-
-<script>
-  const activities = [
-    { title: "迎新活動", info: "10/1 大禮堂", detail: "迎新說明。" },
-    { title: "合作說明會", info: "10/10 系辦", detail: "合作方式。" }
-  ];
-
-  const stores = [
-    { title: "飲料店 A", info: "學生 9 折", detail: "憑學生證。" },
-    { title: "餐廳 B", info: "套餐優惠", detail: "活動期間。" }
-  ];
-
-  function createCards(data, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = "";
-    data.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <h3>${item.title}</h3>
-        <p>${item.info}</p>
-        <button>查看</button>
-        <div class="detail">${item.detail}</div>
-      `;
-      card.querySelector("button").onclick = () => {
-        card.querySelector(".detail").classList.toggle("show");
-      };
-      container.appendChild(card);
-    });
-  }
-
-  createCards(activities, "activityList");
-  createCards(stores, "storeList");
-</script>
 
 </body>
 </html>
