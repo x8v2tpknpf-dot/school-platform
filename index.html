@@ -382,7 +382,12 @@
 
 <script>
   /* =========================
-     基本資料（含 localStorage）
+     後端設定
+     ========================= */
+  const API_BASE = "http://localhost:3000";
+
+  /* =========================
+     localStorage（當後端沒開時的備援）
      ========================= */
   const STORAGE_KEY = "assoc_store_platform_activities_v1";
 
@@ -405,7 +410,7 @@
     }
   ];
 
-  function loadActivities() {
+  function loadLocalActivities() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
@@ -416,17 +421,44 @@
       if (!Array.isArray(data)) throw new Error("Activities data invalid");
       return data;
     } catch (e) {
-      // 若資料毀損，回復預設
       localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultActivities));
       return [...defaultActivities];
     }
   }
 
-  function saveActivities(list) {
+  function saveLocalActivities(list) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   }
 
-  let activities = loadActivities();
+  /* =========================
+     活動資料（以後端為主；沒後端就用 local）
+     ========================= */
+  let activities = loadLocalActivities();
+
+  async function fetchActivitiesFromBackend() {
+    const res = await fetch(`${API_BASE}/api/activities`);
+    if (!res.ok) throw new Error("API failed: " + res.status);
+    const data = await res.json();
+
+    // 後端格式假設：
+    // { id, title, date, location, desc, packages }
+    if (!Array.isArray(data)) throw new Error("Bad data from backend");
+    return data;
+  }
+
+  async function refreshActivities() {
+    try {
+      const backendActs = await fetchActivitiesFromBackend();
+      activities = backendActs;
+      // 備援：順便存到 local，讓後端關掉時也能看到最後一次資料
+      saveLocalActivities(activities);
+      return true;
+    } catch (err) {
+      console.warn("⚠️ 後端抓不到活動，改用 localStorage 備援：", err);
+      activities = loadLocalActivities();
+      return false;
+    }
+  }
 
   /* =========================
      使用者狀態
@@ -497,9 +529,9 @@
 
     homeContent.innerHTML = `
       <div class="hero">
-        <h2>您好，${currentUser.name}（${roleName}）</h2>
+        <h2>您好，${escapeHtml(currentUser.name)}（${roleName}）</h2>
         <p>${roleDesc}</p>
-        <div class="tagline">提示：活動資料會自動保存（重新整理也不會消失）</div>
+        <div class="tagline">提示：活動資料會以後端為主；後端暫停時會使用本機備援資料。</div>
       </div>
     `;
   }
@@ -508,7 +540,6 @@
      活動卡片渲染
      ========================= */
   function createActivityCard(act, mode) {
-    // mode: "view"（單純看） | "cooperate"（店家合作）
     const card = document.createElement("div");
     card.className = "card";
 
@@ -516,14 +547,14 @@
       ? act.packages
       : ["合作洽談"];
 
-    const infoLine = `時間：${act.date || "未填"}｜地點：${act.location || "未填"}`;
+    const infoLine = `時間：${escapeHtml(act.date || "未填")}｜地點：${escapeHtml(act.location || "未填")}`;
 
     if (mode === "cooperate") {
       card.innerHTML = `
-        <h3>${act.title}</h3>
+        <h3>${escapeHtml(act.title)}</h3>
         <p>${infoLine}</p>
         <button type="button">查看活動簡介</button>
-        <div class="detail">${act.desc || "（尚未提供活動簡介）"}</div>
+        <div class="detail">${escapeHtml(act.desc || "（尚未提供活動簡介）").replaceAll("\n","<br>")}</div>
 
         <div style="margin-top:12px;">
           <div style="font-weight:800;color:#2c3e50;margin-bottom:8px;">選擇合作方案（店家）</div>
@@ -561,14 +592,12 @@
         </div>
       `;
 
-      // 詳情開關
       const detailBtn = card.querySelector("button");
       const detail = card.querySelector(".detail");
       detailBtn.onclick = () => detail.classList.toggle("show");
 
-      // 產生 mailto
       const makeMailBtn = card.querySelector(".makeMailBtn");
-      makeMailBtn.onclick = () => {
+      makeMailBtn.onclick = async () => {
         const plan = card.querySelector(".planSelect").value;
         const assocEmail = card.querySelector(".assocEmail").value.trim();
         const storeContact = card.querySelector(".storeContact").value.trim();
@@ -577,6 +606,26 @@
         if (!storeContact) {
           alert("請先填寫：店家聯絡資訊（讓系學會能回覆）");
           return;
+        }
+
+        // （可選）若你的後端之後有 /api/intents，這裡會自動送出意向，不影響 mailto
+        try {
+          await fetch(`${API_BASE}/api/intents`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-role": "store",
+              "x-name": currentUser?.name || ""
+            },
+            body: JSON.stringify({
+              activityId: act.id,
+              plan,
+              contact: storeContact,
+              note: msg || ""
+            })
+          });
+        } catch (_) {
+          // 沒有 intents API 也沒關係，先忽略
         }
 
         const subject = `【合作洽談】${act.title}｜方案：${plan}`;
@@ -603,9 +652,8 @@
       return card;
     }
 
-    // view mode
     card.innerHTML = `
-      <h3>${act.title}</h3>
+      <h3>${escapeHtml(act.title)}</h3>
       <p>${infoLine}</p>
       <button type="button">查看詳情</button>
       <div class="detail">
@@ -642,12 +690,10 @@
           </p>
         </div>
       `;
-      // 系學會端也能看到同一份活動清單（但不顯示店家表單）
       activities.forEach(act => cooperateList.appendChild(createActivityCard(act, "view")));
       return;
     }
 
-    // 店家端
     cooperateIntro.innerHTML = `
       <div class="hero" style="margin-top:10px;">
         <h2 style="font-size:22px;margin:0 0 6px;">店家端操作</h2>
@@ -669,8 +715,14 @@
       .replaceAll("'", "&#039;");
   }
 
+  async function refreshAndRenderAll() {
+    await refreshActivities();
+    renderActivitiesPage();
+    renderCooperatePage();
+  }
+
   /* =========================
-     系學會：新增活動
+     系學會：新增活動（改成打後端 POST）
      ========================= */
   function clearAddActivityForm() {
     actTitle.value = "";
@@ -680,7 +732,7 @@
     actDesc.value = "";
   }
 
-  addActivityBtn.onclick = () => {
+  addActivityBtn.onclick = async () => {
     if (!currentUser || currentUser.role !== "assoc") {
       alert("此功能僅限系學會使用。");
       return;
@@ -701,18 +753,32 @@
       ? packagesRaw.split(",").map(s => s.trim()).filter(Boolean)
       : ["合作洽談"];
 
-    const newAct = {
-      id: crypto.randomUUID(),
-      title, date, location, desc, packages
-    };
+    try {
+      const res = await fetch(`${API_BASE}/api/activities`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-role": "assoc",
+          "x-name": currentUser.name
+        },
+        body: JSON.stringify({ title, date, location, desc, packages })
+      });
 
-    activities = [newAct, ...activities];
-    saveActivities(activities);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || ("HTTP " + res.status));
+      }
 
-    clearAddActivityForm();
-    renderActivitiesPage();
-    renderCooperatePage();
-    alert("新增成功！店家端也會同步看到此活動。");
+      const created = await res.json();
+      // 重新抓一次，確保兩邊一致
+      await refreshAndRenderAll();
+
+      clearAddActivityForm();
+      alert("新增成功！店家端也會同步看到此活動。");
+    } catch (e) {
+      console.warn("新增活動失敗（後端可能沒開）", e);
+      alert("新增失敗：後端未啟動或連線失敗。\n請確認你有在 assoc-backend 資料夾執行：node server.js");
+    }
   };
 
   resetActivityBtn.onclick = clearAddActivityForm;
@@ -720,7 +786,7 @@
   /* =========================
      登入 / 登出
      ========================= */
-  loginBtn.onclick = () => {
+  loginBtn.onclick = async () => {
     const name = nameInput.value.trim();
     const role = roleSelect.value;
 
@@ -736,23 +802,21 @@
     const roleText = role === "assoc" ? "系學會" : "店家";
     welcomeText.textContent = `您好，${name}（${roleText}）`;
 
-    // 依身分顯示新增活動
     addActivityBox.classList.toggle("hidden", role !== "assoc");
 
     renderPostLoginHome();
-    renderActivitiesPage();
-    renderCooperatePage();
+
+    // 登入後先同步抓後端最新活動
+    await refreshAndRenderAll();
   };
 
   logoutBtn.onclick = () => {
-    // 不刪資料（保留 localStorage），只做登出
     currentUser = null;
 
     loginArea.classList.remove("hidden");
     userInfo.classList.add("hidden");
     navBar.classList.add("hidden");
 
-    // 回到首頁
     pages.forEach(p => p.classList.remove("active-page"));
     document.getElementById("home").classList.add("active-page");
     navBtns.forEach(b => b.classList.remove("active"));
@@ -768,7 +832,7 @@
      導覽切換（未登入不允許切其他頁）
      ========================= */
   navBtns.forEach(btn => {
-    btn.onclick = () => {
+    btn.onclick = async () => {
       if (!currentUser) {
         alert("請先登入後查看功能頁面。");
         return;
@@ -780,19 +844,21 @@
       pages.forEach(p => p.classList.remove("active-page"));
       document.getElementById(btn.dataset.target).classList.add("active-page");
 
-      // 切頁時同步刷新（避免資料不同步）
-      if (btn.dataset.target === "activities") renderActivitiesPage();
-      if (btn.dataset.target === "cooperate") renderCooperatePage();
+      // 切頁時同步刷新（確保兩角色看到同一份後端資料）
+      if (btn.dataset.target === "activities" || btn.dataset.target === "cooperate") {
+        await refreshAndRenderAll();
+      }
       if (btn.dataset.target === "home") renderPostLoginHome();
     };
   });
 
   /* =========================
-     初始化：登入前首頁
+     初始化：登入前首頁 + 預先渲染（備援）
      ========================= */
   renderPreLoginHome();
-  renderActivitiesPage(); // 先渲染好（登入後更快）
+  renderActivitiesPage();
 </script>
+
 
 </body>
 </html>
